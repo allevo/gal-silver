@@ -4,14 +4,14 @@ const AuthService = require('./service')
 
 module.exports = async function (fastify, opts) {
   fastify.register(require('fastify-jwt'), {
-    secret: 'supersecret'
+    secret: opts.JWT_SECRET
   })
   await fastify.after()
 
   const authService = new AuthService(fastify.jwt)
   fastify.decorate('authService', authService)
 
-  fastify.get('/inspect', inspectTokenAPI)
+  fastify.get('/inspect', { schema: inspectTokenAPIInputSchema }, inspectTokenAPI)
   fastify.post('/login', { schema: loginAPIInputSchema }, loginAPI)
 
   fastify.setErrorHandler(function (error, request, reply) {
@@ -26,6 +26,11 @@ module.exports = async function (fastify, opts) {
   })
 }
 
+const inspectTokenAPIInputSchema = {
+  headers: {
+    authorization: { type: 'string' }
+  }
+}
 async function inspectTokenAPI (req, res) {
   const authorization = req.headers.authorization
 

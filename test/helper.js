@@ -10,7 +10,9 @@ const App = require('../app')
 // Fill in this config with all the configurations
 // needed for testing the application
 function config () {
-  return {}
+  return {
+    JWT_SECRET: 'my-test-secret-for-jwt'
+  }
 }
 
 // automatically build and tear down our instance
