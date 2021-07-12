@@ -41,13 +41,14 @@ test('auth', async (t) => {
     })
   })
 
-  const validationTests = [
+  // BAD LOGIN
+  const loginValidationTests = [
     { name: 'username is required', requestBody: { password: 'qwerty' }, expectedStatusCode: 400 },
     { name: 'password is required', requestBody: { username: 'allevo' }, expectedStatusCode: 400 },
     { name: 'return 401 on user not found', requestBody: { username: 'unknonw', password: 'qwerty' }, expectedStatusCode: 401 },
     { name: 'return 401 on wrong pwd', requestBody: { username: 'allevo', password: 'wrong' }, expectedStatusCode: 401 }
   ]
-  for (const test of validationTests) {
+  for (const test of loginValidationTests) {
     t.test(test.name, async t => {
       const res = await app.inject({
         url: '/auth/login',
@@ -58,14 +59,22 @@ test('auth', async (t) => {
     })
   }
 
-  t.test('inpect endoint should return 401 on bad jwt', async t => {
-    const res = await app.inject({
-      url: '/auth/inspect',
-      method: 'GET',
-      headers: {
-        Authorization: 'Bearer bad-token'
-      }
-    })
-    t.equal(res.statusCode, 401, 'should return 401', { responseBody: res.payload })
+  // INSPECT
+  t.test('inpect endoint should return 401', async t => {
+    const inspectValidationTests = [
+      { name: 'on bad jwt', headers: { Authorization: 'Bearer bad-token' } },
+      { name: 'without authorization headers', headers: { } },
+      { name: 'on wrong authorization type', headers: { Authorization: 'Basic foo' } }
+    ]
+    for (const test of inspectValidationTests) {
+      t.test(test.name, async t => {
+        const res = await app.inject({
+          url: '/auth/inspect',
+          method: 'GET',
+          headers: test.headers
+        })
+        t.equal(res.statusCode, 401, 'should return 401', { responseBody: res.payload })
+      })
+    }
   })
 })
