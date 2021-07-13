@@ -19,6 +19,8 @@ module.exports = async function (fastify, opts) {
     data: opts
   })
 
+  fastify.log.info('Env is ok')
+
   fastify.register(require('fastify-swagger'), {
     routePrefix: '/documentation',
     exposeRoute: true

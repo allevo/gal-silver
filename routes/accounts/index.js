@@ -24,7 +24,7 @@ module.exports = async function (fastify, opts) {
   })
 
   fastify.post('/', { schema: accountAPIInputSchema }, createAccount)
-  fastify.get('/', getAllMyAccounts)
+  fastify.get('/', { schema: getAllMyAccountsAPIInputSchema }, getAllMyAccounts)
 
   fastify.setErrorHandler(function (error, request, reply) {
     if (reply.isAuthError(error)) {
@@ -51,6 +51,9 @@ const accountAPIInputSchema = {
       initialBalance: { type: 'number' },
       currency: { enum: ['EUR', 'USD'] }
     }
+  },
+  headers: {
+    authorization: { type: 'string' }
   }
 }
 async function createAccount (req, res) {
@@ -62,6 +65,11 @@ async function createAccount (req, res) {
   return newAccount
 }
 
+const getAllMyAccountsAPIInputSchema = {
+  headers: {
+    authorization: { type: 'string' }
+  }
+}
 async function getAllMyAccounts (req, res) {
   const accountService = req.getAccountService()
 
