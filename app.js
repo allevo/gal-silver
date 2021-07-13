@@ -6,9 +6,10 @@ const envSchema = require('env-schema')
 
 const schema = {
   type: 'object',
-  required: ['JWT_SECRET'],
+  required: ['JWT_SECRET', 'MONGODB_URL'],
   properties: {
-    JWT_SECRET: { type: 'string' }
+    JWT_SECRET: { type: 'string' },
+    MONGODB_URL: { type: 'string' }
   }
 }
 

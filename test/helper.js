@@ -10,8 +10,10 @@ const App = require('../app')
 // Fill in this config with all the configurations
 // needed for testing the application
 function config () {
+  const random = 'account-test-' + (Math.random() + '').split('.')[1]
   return {
-    JWT_SECRET: 'my-test-secret-for-jwt'
+    JWT_SECRET: 'my-test-secret-for-jwt',
+    MONGODB_URL: 'mongodb://localhost:27017/' + random
   }
 }
 

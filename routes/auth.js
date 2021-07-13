@@ -1,23 +1,17 @@
 'use strict'
 
-const AuthService = require('./service')
+const assert = require('assert')
 
 module.exports = async function (fastify, opts) {
-  fastify.register(require('fastify-jwt'), {
-    secret: opts.JWT_SECRET
-  })
-  await fastify.after()
+  assert(fastify.authService)
 
-  const authService = new AuthService(fastify.jwt)
-  fastify.decorate('authService', authService)
-
-  fastify.get('/inspect', { schema: inspectTokenAPIInputSchema }, inspectTokenAPI)
-  fastify.post('/login', { schema: loginAPIInputSchema }, loginAPI)
+  fastify.get('/auth/inspect', { schema: inspectTokenAPIInputSchema }, inspectTokenAPI)
+  fastify.post('/auth/login', { schema: loginAPIInputSchema }, loginAPI)
 
   fastify.setErrorHandler(function (error, request, reply) {
     switch (error.message) {
-      case AuthService.errorCodes.WRONG_CREDENTIALS:
-      case AuthService.errorCodes.WRONG_JWT:
+      case this.AUTH_ERROR_CODES.WRONG_CREDENTIALS:
+      case this.AUTH_ERROR_CODES.WRONG_JWT:
         reply.code(401).send(error)
         return
       default:
