@@ -13,4 +13,12 @@ module.exports = fp(async function (fastify, opts) {
   const authService = new AuthService(fastify.jwt)
   fastify.decorate('authService', authService)
   fastify.decorate('AUTH_ERROR_CODES', AuthService.errorCodes)
+
+  fastify.decorateReply('isAuthError', function (error) {
+    return !!AuthService.errorCodes[error.message]
+  })
+  fastify.decorateReply('handleAuthError', function (error) {
+    // this = reply
+    this.code(401).send(error)
+  })
 })

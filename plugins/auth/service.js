@@ -43,8 +43,8 @@ class AuthService {
 }
 
 AuthService.errorCodes = {
-  WRONG_CREDENTIALS: 'wrong credentials',
-  WRONG_JWT: 'wrong jwt'
+  WRONG_CREDENTIALS: 'WRONG_CREDENTIALS',
+  WRONG_JWT: 'WRONG_JWT'
 }
 
 const credentialDatabase = [

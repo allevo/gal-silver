@@ -25,6 +25,21 @@ module.exports = async function (fastify, opts) {
 
   fastify.post('/', { schema: accountAPIInputSchema }, createAccount)
   fastify.get('/', getAllMyAccounts)
+
+  fastify.setErrorHandler(function (error, request, reply) {
+    if (reply.isAuthError(error)) {
+      reply.handleAuthError(error)
+      return
+    }
+    switch (error.message) {
+      case AccountService.errorCodes.NOT_ALLOWED_TO_CREATE_NEW_ACCOUNT:
+        reply.code(403).send(error)
+        return
+      /* istanbul ignore next */
+      default:
+        reply.send(error)
+    }
+  })
 }
 
 const accountAPIInputSchema = {

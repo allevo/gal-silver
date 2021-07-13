@@ -9,14 +9,11 @@ module.exports = async function (fastify, opts) {
   fastify.post('/auth/login', { schema: loginAPIInputSchema }, loginAPI)
 
   fastify.setErrorHandler(function (error, request, reply) {
-    switch (error.message) {
-      case this.AUTH_ERROR_CODES.WRONG_CREDENTIALS:
-      case this.AUTH_ERROR_CODES.WRONG_JWT:
-        reply.code(401).send(error)
-        return
-      default:
-        reply.send(error)
+    if (reply.isAuthError(error)) {
+      reply.handleAuthError(error)
+      return
     }
+    reply.send(error)
   })
 }
 
