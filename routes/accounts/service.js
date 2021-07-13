@@ -45,7 +45,6 @@ AccountService.errorCodes = {
 module.exports = AccountService
 
 function assertUserIsAllowedToCreateNewAccount (user) {
-  console.log(user)
   if (!user.groups.includes('admin')) {
     throw new Error(AccountService.errorCodes.NOT_ALLOWED_TO_CREATE_NEW_ACCOUNT)
   }
